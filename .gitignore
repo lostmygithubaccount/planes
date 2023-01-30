@@ -1,0 +1,16 @@
+# python
+.venv
+venv
+
+# dbt
+target/
+dbt_packages/
+logs/
+.user.yml
+
+## duckdb
+*.duckdb*
+csvs/
+
+# images
+images/

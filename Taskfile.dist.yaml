@@ -1,0 +1,69 @@
+# https://taskfile.dev
+version: '3'
+
+# version control variables
+dotenv: ['.env']
+
+tasks:
+
+  # helper tasks
+  clean:
+    - rm -rf *.duckdb*
+    - dbt clean
+
+  reqs:
+    - pip install --upgrade -r requirements.txt
+
+  csv:
+    cmds:
+      - rm -rf csvs
+      - mkdir csvs
+      - git lfs clone https://github.com/metmuseum/openaccess openaccess
+      - mv openaccess/MetObjects.csv csvs/MetObjects.csv
+      - rm -rf openaccess
+
+  setup:
+    cmds:
+      - pyenv install ${PYTHON_VERSION}
+      - pyenv local ${PYTHON_VERSION}
+      - python3 -m venv venv
+      - source venv/bin/activate
+      - task: reqs
+      - task: csv
+
+  run:
+    cmds:
+      - dbt run
+
+  eda:
+    cmds:
+      - cp dbt.duckdb eda.duckdb
+
+  edaSql:
+    cmds:
+      - task: eda
+      - duckdb eda.duckdb
+
+  edaPy:
+    cmds:
+      - task: eda
+      - ipython -i eda.py
+
+  edaCode:
+    cmds:
+      - task: eda
+      - code .
+      - code eda.ipynb
+
+  edaWeb:
+    cmds:
+      - open eda.html
+
+  docs:
+    cmds:
+      - cp dbt.duckdb docs.duckdb
+      - cmd: kill -9 $(lsof -t -i:8080)
+        ignore_error: true
+      - dbt docs generate --target docs
+      - dbt docs serve --target docs
+

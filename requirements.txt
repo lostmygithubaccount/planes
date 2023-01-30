@@ -1,0 +1,23 @@
+# python
+tqdm
+black
+ipython
+
+# data
+requests
+dbt-duckdb
+duckdb
+duckcli
+pyarrow
+pandas-profiling
+
+# science
+numpy
+pandas
+scipy
+scikit-learn
+dask
+distributed
+modin
+catboost
+
